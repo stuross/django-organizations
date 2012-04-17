@@ -41,6 +41,13 @@ class Account(AccountsBase):
     def __unicode__(self):
         return u"%s" % self.name
 
+    def save(self, *args, **kwargs):
+        if self.subdomain == "":
+            self.subdomain = None
+        if self.domain == "":
+            self.domain = None
+        super(Account, self).save(*args, **kwargs)
+
     @permalink
     def get_absolute_url(self):
         return ('account_detail', (), {'account_pk': self.pk})

@@ -41,6 +41,15 @@ class AccountModelsTest(TestCase, AccountUserTestingMixin):
                 is_active=False)
         self.assertEqual(2, len(Account.objects.active()))
 
+    def test_empty_domain_fields(self):
+        """Domain and subdomain fields should be null if empty"""
+        from accounts.models import Account
+        account1 = Account.objects.create(name="My test account", subdomain="",
+                domain="")
+        self.assertEqual(None, account1.domain)
+        self.assertEqual(None, account1.subdomain)
+
+
 
 class UserAccountRelationships(TestCase, AccountUserTestingMixin):
     """
