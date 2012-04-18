@@ -48,6 +48,9 @@ class AccountModelsTest(TestCase, AccountUserTestingMixin):
                 domain="")
         self.assertEqual(None, account1.domain)
         self.assertEqual(None, account1.subdomain)
+        # Don't raise an exception about non-equal values for NULLs
+        account2 = Account.objects.create(name="Another Account", subdomain="",
+                domain="")
 
 
 

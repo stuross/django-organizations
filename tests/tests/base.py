@@ -192,7 +192,8 @@ class BaseDeletionViewsTest(AccountUserTestingMixin, TestCase):
 
 class BaseUpdateDeletionViewsTest(AccountUserTestingMixin, TestCase):
     """
-    Test the views for deleting accounts and account users
+    Test the views for deleting accounts and account users. Tests as
+    accountuser_1 who is a member, and the owner of, account1
     """
     def setUp(self):
         self.get_fixtures()
@@ -201,13 +202,17 @@ class BaseUpdateDeletionViewsTest(AccountUserTestingMixin, TestCase):
     def test_simple_account_update(self):
         """Ensure that the account update view updates"""
         response = self.client.post(reverse("base_account_edit",
-            kwargs={"account_pk": 2}),data={"name": "Updated"})
+            kwargs={"account_pk": self.account1.pk}), data={"name": "Updated"})
         self.assertEqual(response.status_code, 302)
 
     def test_simple_accountuser_update(self):
         """Ensure that the account updates view updates"""
         response = self.client.post(reverse("base_accountuser_edit",
-            kwargs={"account_pk": 2, "accountuser_pk": 1}),
-            data={"username": "newusername"})
+            kwargs={"account_pk": self.account1.pk, "accountuser_pk":
+                self.accountuser_1.pk}), data={
+                    "username": "newusername",
+                    "first_name": self.accountuser_1.user.first_name,
+                    "last_name": self.accountuser_1.user.last_name,
+                    "email": self.accountuser_1.user.email})
         self.assertEqual(response.status_code, 302)
 

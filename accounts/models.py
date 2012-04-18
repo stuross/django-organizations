@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from accounts.managers import AccountManager
+from accounts.fields import UniqueCharField
 
 
 class AccountsBase(models.Model):
@@ -25,10 +26,8 @@ class Account(AccountsBase):
     owner.
     """
     name = models.CharField(max_length=100)
-    subdomain = models.CharField(max_length=100, blank=True, null=True,
-            unique=True)
-    domain = models.CharField(max_length=100, blank=True, null=True,
-            unique=True)
+    subdomain = UniqueCharField(max_length=100)
+    domain = UniqueCharField(max_length=100)
     is_active = models.BooleanField(default=True)
 
     objects = AccountManager()

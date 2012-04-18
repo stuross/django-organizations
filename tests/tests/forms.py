@@ -16,7 +16,7 @@ class AccountFormTest(AccountUserTestingMixin, TestCase):
         from accounts.forms import AccountForm
         from accounts.utils import create_account
         account = create_account("First", self.user, subdomain="first")
-        form = AccountForm(initial={
+        form = AccountForm({
             "name": "My test",
             "subdomain": "first",
         })
@@ -28,11 +28,24 @@ class AccountFormTest(AccountUserTestingMixin, TestCase):
         from accounts.utils import create_account
         account = create_account("First", self.user,
                 domain="sub.example.com")
-        form = AccountForm(initial={
+        form = AccountForm({
             "name": "My test",
             "domain": "sub.example.com",
         })
         self.assertFalse(form.is_valid())
+
+    def test_blank_domains(self):
+        """Blank domains should not be considered duplicates"""
+        from accounts.forms import AccountForm
+        from accounts.models import Account
+        from accounts.utils import create_account
+        base_account = create_account("Test", self.user)
+        form = AccountForm({
+            "name": "My test",
+            "domain": "",
+            "subdomain": "",
+        })
+        self.assertTrue(form.is_valid())
 
     def test_create_account_new_user(self):
         """Ensure valid when all fresh information"""

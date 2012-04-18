@@ -9,6 +9,14 @@ class AccountForm(forms.ModelForm):
     class Meta:
         model = Account
 
+    def clean_domain(self):
+        domain = self.cleaned_data['domain']
+        return None if domain == "" else domain
+
+    def clean_subdomain(self):
+        subdomain = self.cleaned_data['subdomain']
+        return None if subdomain == "" else subdomain
+
 
 class AccountUserForm(forms.ModelForm):
     """
