@@ -1,9 +1,16 @@
+from django.conf import settings
 from django.db import models
 from django.db.models import permalink
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from organizations.managers import OrgManager, ActiveOrgManager
+
+
+def get_user_model():
+    """Returns the User model which should be used. This functionality won't be
+    built-in until Django 1.5.
+    """
+    return getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
 class OrganizationsBase(models.Model):
@@ -26,7 +33,7 @@ class Organization(OrganizationsBase):
             help_text=_("The name of the organization"))
     slug = models.SlugField(max_length=100, unique=True,
             help_text=_("The name in all lowercase, suitable for URL identification"))
-    users = models.ManyToManyField(User, through="OrganizationUser")
+    users = models.ManyToManyField(get_user_model(), through="OrganizationUser")
     is_active = models.BooleanField(default=True)
 
     objects = OrgManager()
@@ -76,7 +83,7 @@ class OrganizationUser(OrganizationsBase):
     and the contrib.auth application.
 
     """
-    user = models.ForeignKey(User, related_name="organization_users")
+    user = models.ForeignKey(get_user_model(), related_name="organization_users")
     organization = models.ForeignKey(Organization,
             related_name="organization_users")
     is_admin = models.BooleanField(default=False)
