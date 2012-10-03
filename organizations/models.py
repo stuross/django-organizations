@@ -1,6 +1,7 @@
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.db.models import permalink
+from django.db.models import permalink, get_model
 from django.utils.translation import ugettext_lazy as _
 
 from organizations.managers import OrgManager, ActiveOrgManager
@@ -10,7 +11,13 @@ def get_user_model():
     """Returns the User model which should be used. This functionality won't be
     built-in until Django 1.5.
     """
-    return getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
+    klass_string = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
+    try:
+        klass = get_model(klass_string.split('.')[0],
+                klass_string.split('.')[1])
+    except:
+        raise ImproperlyConfigured(_("Your user class is improperly defined"))
+    return klass
 
 
 class OrganizationsBase(models.Model):
