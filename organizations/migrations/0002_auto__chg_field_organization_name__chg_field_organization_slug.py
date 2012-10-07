@@ -3,7 +3,11 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.conf import settings
 from organizations.models import get_user_model
+
+
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
 class Migration(SchemaMigration):
@@ -33,7 +37,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '100'}),
-            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm[{user_model}]".format(user_model=get_user_model()), 'through': "orm['organizations.OrganizationUser']", 'symmetrical': 'False'})
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['{model}']".format(model=AUTH_USER_MODEL), 'through': "orm['organizations.OrganizationUser']", 'symmetrical': 'False'})
         },
         'organizations.organizationowner': {
             'Meta': {'object_name': 'OrganizationOwner'},
@@ -50,7 +54,7 @@ class Migration(SchemaMigration):
             'is_admin': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'organization': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'organization_users'", 'to': "orm['organizations.Organization']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'organization_users'", 'to': "orm[{user_model}]".format(user_moel=get_user_model())})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'organization_users'", 'to': "orm['{model}']".format(model=AUTH_USER_MODEL)})
         }
     }
 
