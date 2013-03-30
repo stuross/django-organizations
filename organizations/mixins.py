@@ -10,6 +10,8 @@ class OrganizationMixin(object):
 
     org_model = Organization
     org_context_name = 'organization'
+    org_slug_url_kwarg = 'organization_slug'
+    org_pk_url_kwarg = 'organization_pk'
 
     def get_org_model(self):
         return self.org_model
@@ -18,13 +20,19 @@ class OrganizationMixin(object):
         kwargs.update({self.org_context_name: self.get_organization()})
         return super(OrganizationMixin, self).get_context_data(**kwargs)
 
-    def get_object(self):
+    def get_organization(self):
         if hasattr(self, 'organization'):
             return self.organization
-        organization_pk = self.kwargs.get('organization_pk', None)
-        self.organization = get_object_or_404(self.get_org_model(), pk=organization_pk)
+
+        organization_pk = self.kwargs.get(self.org_pk_url_kwarg, None)
+        organization_slug = self.kwargs.get(self.org_slug_url_kwarg, None)
+
+        if organization_pk:
+            self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), pk=organization_pk)
+        elif organization_slug is not None:
+            self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), slug=organization_slug)
         return self.organization
-    get_organization = get_object # Now available when `get_object` is overridden
+    #get_organization = get_object # Now available when `get_object` is overridden
 
 
 class OrganizationUserMixin(OrganizationMixin):
@@ -48,11 +56,11 @@ class OrganizationUserMixin(OrganizationMixin):
         """
         if hasattr(self, 'organization_user'):
             return self.organization_user
-        organization_pk = self.kwargs.get('organization_pk', None)
+        organization = self.get_organization()
         user_pk = self.kwargs.get('user_pk', None)
         self.organization_user = get_object_or_404(
                 OrganizationUser.objects.select_related(),
-                user__pk=user_pk, organization__pk=organization_pk)
+                user__pk=user_pk, organization=organization)
         return self.organization_user
 
 

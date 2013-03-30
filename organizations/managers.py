@@ -1,7 +1,8 @@
 from django.db import models
+from model_utils.managers import InheritanceManager
 
 
-class OrgManager(models.Manager):
+class OrgManager(InheritanceManager):
 
     def get_for_user(self, user):
         return self.get_query_set().filter(users=user)
