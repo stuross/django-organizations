@@ -28,9 +28,9 @@ class OrganizationMixin(object):
         organization_slug = self.kwargs.get(self.org_slug_url_kwarg, None)
 
         if organization_pk:
-            self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), pk=organization_pk)
+            self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), pk=organization_pk, is_active=True)
         elif organization_slug is not None:
-            self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), slug=organization_slug)
+            self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), slug=organization_slug, is_active=True)
         return self.organization
     #get_organization = get_object # Now available when `get_object` is overridden
 
