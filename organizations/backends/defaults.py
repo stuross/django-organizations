@@ -102,13 +102,13 @@ class BaseBackend(object):
 
         kwargs.update({'sender': sender, 'user': user})
         ctx = Context(kwargs, autoescape=False)
-
+        
         subject_template = loader.get_template(subject_template)
         body_template = loader.get_template(body_template)
         subject = subject_template.render(ctx).strip() # Remove stray newline characters
         body = body_template.render(ctx)
-        return EmailMessage(subject, body, from_email, [user.email],
-                headers).send()
+        return EmailMessage(subject=subject, body=body, from_email=from_email, to=[user.email],
+                headers=headers).send()
 
 
 class RegistrationBackend(BaseBackend):
