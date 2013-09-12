@@ -31,6 +31,9 @@ class OrganizationMixin(object):
             self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), pk=organization_pk, is_active=True)
         elif organization_slug is not None:
             self.organization = get_object_or_404(self.get_org_model().objects.select_subclasses(), slug=organization_slug, is_active=True)
+
+        self.request.session['organization'] = self.organization
+
         return self.organization
     #get_organization = get_object # Now available when `get_object` is overridden
 
